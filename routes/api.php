@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\OfferController;
 use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\PageController;
+use App\Http\Controllers\Api\LeadSearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,5 +70,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/published/list', [PageController::class, 'getPublished']);
         Route::get('/slug/{slug}', [PageController::class, 'getBySlug']);
     });
+Route::post('/lead-search', [LeadSearchController::class, 'store']);
+
 
 });

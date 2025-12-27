@@ -56,4 +56,9 @@ class Brand extends Model
             ? array_map(fn ($b) => asset('storage/' . $b), $this->banners)
             : [];
     }
+    public function offers()
+{
+    return $this->belongsToMany(Offer::class);
+}
+
 }

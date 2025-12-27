@@ -107,8 +107,11 @@ Forms\Components\Placeholder::make('cars_prices')
             Tables\Columns\TextColumn::make('slug')
     ->searchable()
     ->sortable(),
-            Tables\Columns\TextColumn::make('brand.name')->label('Brand')->sortable()->searchable(),
-            Tables\Columns\TextColumn::make('cars_count')->label('Cars')->counts('cars'),
+Tables\Columns\TextColumn::make('brands.name')
+    ->label('Brands')
+    ->badge()
+    ->separator(', ')     , 
+          Tables\Columns\TextColumn::make('cars_count')->label('Cars')->counts('cars'),
             Tables\Columns\TextColumn::make('start_date')->date(),
             Tables\Columns\TextColumn::make('end_date')->date(),
         ])

@@ -9,14 +9,15 @@ use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
-    public function index()
-    {
-        $offers = Offer::with(['brand', 'cars'])->get();
-        return response()->json([
-            'success' => true,
-            'data' => $offers,
-        ]);
-    }
+   public function index()
+{
+    $offers = Offer::with(['brands', 'cars'])->get();
+    return response()->json([
+        'success' => true,
+        'data' => $offers,
+    ]);
+}
+
 
  public function store(Request $request)
 {

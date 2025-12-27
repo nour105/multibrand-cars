@@ -66,6 +66,11 @@ public function getExteriorImagesUrlAttribute()
     {
         return $this->belongsTo(Brand::class);
     }
+public function offers()
+{
+    return $this->belongsToMany(Offer::class, 'car_offer', 'car_id', 'offer_id');
+}
+
 
 
 }

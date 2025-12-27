@@ -9,7 +9,6 @@ return new class extends Migration {
     {
       Schema::create('offers', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
     $table->string('title');
     $table->text('description')->nullable();
     $table->decimal('price', 10, 2)->nullable();
