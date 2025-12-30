@@ -25,6 +25,7 @@ class CarController extends Controller
                 return [
                     'id' => $car->id,
                     'name' => $car->name,
+                     'slug' => $car->slug, // ✅ هون ضفنا slug
                     'brand' => $car->brand->name ?? null,
                     'price' => $car->price,
                     'currency' => $car->currency,
@@ -68,6 +69,7 @@ class CarController extends Controller
             $carData = [
                 'id' => $car->id,
                 'name' => $car->name,
+                'slug' => $car->slug, // ✅ هون ضفنا slu
                 'brand' => $car->brand->name ?? null,
                 'price' => $car->price,
                 'currency' => $car->currency,
@@ -232,6 +234,7 @@ class CarController extends Controller
         $carData = [
             'id' => $car->id,
             'name' => $car->name,
+            'slug' => $car->slug, // ✅ هون ضفنا slug
             'brand' => $car->brand->name ?? null,
             'price' => $car->price,
             'currency' => $car->currency,
@@ -273,6 +276,7 @@ class CarController extends Controller
                 return [
                     'id' => $car->id,
                     'name' => $car->name,
+                    'slug' => $car->slug, // ✅ هون ضفنا slug
                     'brand' => $car->brand->name ?? null,
                     'price' => $car->price,
                     'currency' => $car->currency,

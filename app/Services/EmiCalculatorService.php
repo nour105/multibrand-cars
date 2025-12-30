@@ -14,7 +14,6 @@ class EmiCalculatorService
         $pct = $this->emiPct($hasLoans, $loanType);
 
         $salaryBudget = $salary * $pct;
-
         $visa = $this->visaValue($visaLimit);
         $visaBonus = $visa * 0.05;
 
@@ -45,9 +44,7 @@ class EmiCalculatorService
 
     private function emiPct(?int $hasLoans, ?string $loanType): float
     {
-        if ($hasLoans !== 1) {
-            return 0.45;
-        }
+        if ($hasLoans !== 1) return 0.45;
 
         return match ($loanType) {
             'realestate' => 0.65,

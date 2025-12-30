@@ -4,27 +4,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::table('offers', function (Blueprint $table) {
-    $table->dropForeign(['brand_id']);
-    $table->dropColumn('brand_id');
-});
+            if (Schema::hasColumn('offers', 'brand_id')) {
+                $sm = Schema::getConnection()->getDoctrineSchemaManager();
+                $doctrineTable = $sm->listTableDetails('offers');
+                
+                if ($doctrineTable->hasForeignKey('offers_brand_id_foreign')) {
+                    $table->dropForeign('offers_brand_id_foreign');
+                }
 
+                $table->dropColumn('brand_id');
+            }
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
+    public function down(): void {
         Schema::table('offers', function (Blueprint $table) {
-            //
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('cascade');
         });
     }
 };

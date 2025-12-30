@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\BrandController;
 use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\LeadSearchController;
+use App\Http\Controllers\Api\MarketingLeadController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +53,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('cars')->group(function () {
         Route::get('/', [CarController::class, 'index']);
         Route::get('/{id}', [CarController::class, 'show']);
-        Route::get('/cars/slug/{slug}', [CarController::class, 'showBySlug']);
+        Route::get('/slug/{slug}', [CarController::class, 'showBySlug']);
         Route::post('/', [CarController::class, 'store']);
         Route::put('/{id}', [CarController::class, 'update']);
         Route::delete('/{id}', [CarController::class, 'destroy']);
@@ -71,6 +73,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/slug/{slug}', [PageController::class, 'getBySlug']);
     });
 Route::post('/lead-search', [LeadSearchController::class, 'store']);
+Route::post('/leads', [LeadSearchController::class, 'store']);
 
+Route::post('/marketing-leads', [MarketingLeadController::class, 'store']);
 
 });

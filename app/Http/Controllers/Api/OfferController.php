@@ -42,14 +42,14 @@ class OfferController extends Controller
 
     return response()->json([
         'success' => true,
-        'data' => $offer->load(['brand', 'cars']),
+        'data' => $offer->load(['brands', 'cars']),
     ], 201);
 }
 
 
 public function show($id)
 {
-    $offer = Offer::with(['brand', 'cars'])->findOrFail($id);
+    $offer = Offer::with(['brands', 'cars'])->findOrFail($id);
     return response()->json([
         'success' => true,
         'data' => $offer,
@@ -84,7 +84,7 @@ public function show($id)
 
     return response()->json([
         'success' => true,
-        'data' => $offer->load(['brand', 'cars']),
+        'data' => $offer->load(['brands', 'cars']),
     ]);
 }
 
@@ -120,7 +120,7 @@ public function show($id)
     }
     public function showBySlug(string $slug)
 {
-    $offer = Offer::with(['brand', 'cars'])
+    $offer = Offer::with(['brands', 'cars'])
         ->where('slug', $slug)
         ->firstOrFail();
 
