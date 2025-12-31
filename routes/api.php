@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\LeadSearchController;
 use App\Http\Controllers\Api\MarketingLeadController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes

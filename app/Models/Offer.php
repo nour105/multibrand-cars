@@ -7,16 +7,18 @@ use Illuminate\Support\Str;
 
 class Offer extends Model
 {
-    protected $fillable = [
-        'title',
-        'slug',
-        'description',
-        'price',
-        'currency',
-        'banners',
-        'start_date',
-        'end_date',
-    ];
+  protected $fillable = [
+    'title',
+    'slug',
+    'description',
+    'price',
+    'currency',
+    'banners',
+    'card_image',
+    'start_date',
+    'end_date',
+];
+
 
     protected $casts = [
         'banners' => 'array',

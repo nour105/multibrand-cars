@@ -18,7 +18,7 @@ return new class extends Migration {
                 $table->json('exterior_images')->nullable()->after('interior_images');
             }
             if (!Schema::hasColumn('cars', 'price')) {
-                $table->decimal('price', 10, 2)->nullable()->after('exterior_images');
+                $table->string('price')->nullable()->after('exterior_images');
             }
             if (!Schema::hasColumn('cars', 'available_trims')) {
                 $table->json('available_trims')->nullable()->after('price');

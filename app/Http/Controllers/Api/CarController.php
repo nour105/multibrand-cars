@@ -21,21 +21,21 @@ class CarController extends Controller
                       ->where('end_date', '>=', Carbon::now());
             }])->get();
 
-            $result = $cars->map(function($car) {
-                return [
-                    'id' => $car->id,
-                    'name' => $car->name,
-                     'slug' => $car->slug, // ✅ هون ضفنا slug
-                    'brand' => $car->brand->name ?? null,
-                    'price' => $car->price,
-                    'currency' => $car->currency,
-                    'emi_monthly' => $car->emi_monthly,
-                    'has_offer' => $car->offers->isNotEmpty(),
-                    'offers' => $car->offers,
-                    'image' => $car->banner_image ? asset('storage/' . $car->banner_image) : null,
-                ];
-            });
-
+           $result = $cars->map(function($car) {
+    return [
+        'id' => $car->id,
+        'name' => $car->name,
+        'slug' => $car->slug,
+        'brand' => $car->brand->name ?? null,
+        'price' => $car->price,
+        'currency' => $car->currency,
+        'emi_monthly' => $car->emi_monthly,
+        'has_offer' => $car->offers->isNotEmpty(),
+        'offers' => $car->offers,
+        'image' => $car->banner_image ? asset('storage/' . $car->banner_image) : null,
+        'card_image' => $car->card_image ? asset('storage/' . $car->card_image) : null, // ✅
+    ];
+});
             return response()->json([
                 'success' => true,
                 'message' => 'Cars retrieved successfully',

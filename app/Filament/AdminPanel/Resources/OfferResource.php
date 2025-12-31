@@ -91,6 +91,14 @@ Forms\Components\Placeholder::make('cars_prices')
                 ->multiple()
                 ->directory('offers/banners')
                 ->reorderable(),
+                
+                Forms\Components\FileUpload::make('card_image')
+    ->label('Card Image')
+    ->image()
+    ->directory('offers/card-images')
+    ->imagePreviewHeight('150')
+    ->required(false),
+
 
             Forms\Components\DatePicker::make('start_date')->required(),
             Forms\Components\DatePicker::make('end_date')->required(),

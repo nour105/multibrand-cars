@@ -22,15 +22,16 @@ class OfferController extends Controller
  public function store(Request $request)
 {
     $validated = $request->validate([
-        'brand_id'   => 'required|exists:brands,id',
-        'car_ids'    => 'required|array',
-        'car_ids.*'  => 'exists:cars,id',
-        'title'      => 'required|string|max:255',
-        'description'=> 'nullable|string',
-        'banners'    => 'nullable|array',
-        'start_date' => 'required|date',
-        'end_date'   => 'required|date|after:start_date',
-    ]);
+    'title'       => 'required|string|max:255',
+    'description' => 'nullable|string',
+    'card_image'  => 'nullable|string',
+    'banners'     => 'nullable|array',
+    'start_date'  => 'required|date',
+    'end_date'    => 'required|date|after:start_date',
+    'car_ids'     => 'required|array',
+    'car_ids.*'   => 'exists:cars,id',
+]);
+
 
     // Create the offer without car_ids
     $offerData = $validated;
@@ -70,8 +71,10 @@ public function show($id)
         'title'      => 'sometimes|string|max:255',
         'description'=> 'nullable|string',
         'banners'    => 'nullable|array',
+        'card_image' => 'nullable|string',
         'start_date' => 'sometimes|date',
         'end_date'   => 'sometimes|date|after:start_date',
+
     ]);
 
     $offerData = $validated;

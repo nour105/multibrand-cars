@@ -14,7 +14,7 @@ class Car extends Model
    protected $fillable = [
     'brand_id',
     'name',
-    'slug', 
+    'slug',
     'description',
     'content',
     'specifications',
@@ -22,13 +22,13 @@ class Car extends Model
     'exterior_images',
     'price',
     'currency',
-    'emi_monthly',      
-    'emi_months',       
+    'emi_monthly',
     'available_trims',
     'colors',
     'features',
     'video_url',
     'banner_image',
+    'card_image', // ✅ new
 ];
 
 

@@ -11,7 +11,7 @@ return new class extends Migration {
     $table->id();
     $table->string('title');
     $table->text('description')->nullable();
-    $table->decimal('price', 10, 2)->nullable();
+    $table->string('price')->nullable();
     $table->string('currency', 3)->default('USD'); // USD or SAR
     $table->json('banners')->nullable();
     $table->date('start_date');

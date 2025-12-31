@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('cars', function (Blueprint $table) {
-    $table->string('emi_monthly')->nullable()->after('price');
-    $table->unsignedSmallInteger('emi_months')->nullable()->after('emi_monthly');
+       Schema::table('cars', function (Blueprint $table) {
+    $table->string('card_image')->nullable()->after('banner_image');
 });
     }
 

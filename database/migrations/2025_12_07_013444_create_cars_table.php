@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->json('specifications')->nullable();
             $table->json('interior_images')->nullable();
             $table->json('exterior_images')->nullable();
-            $table->decimal('price', 10, 2)->nullable(); // Price of car
+            $table->string('price')->nullable(); // Price of car
 $table->json('available_trims')->nullable(); // Available trims/colors
 $table->json('colors')->nullable(); // Available exterior colors
 $table->string('video_url')->nullable(); // Optional video link

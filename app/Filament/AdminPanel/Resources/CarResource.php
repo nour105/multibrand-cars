@@ -55,6 +55,12 @@ Forms\Components\FileUpload::make('banner_image')
     ->image()
     ->disk('public')
     ->directory('cars/banner'),
+    Forms\Components\FileUpload::make('card_image')
+    ->label('Car Card Image')
+    ->image()
+    ->disk('public')
+    ->directory('cars/card')
+    ->helperText('Used in car listing cards (not banner)'),
 
 Forms\Components\TextInput::make('price')
     ->label('Cash Price')
