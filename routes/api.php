@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\LeadSearchController;
 use App\Http\Controllers\Api\MarketingLeadController;
 use App\Http\Controllers\Api\CallbackRequestController;
+use App\Http\Controllers\Api\CtaClickController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,5 +78,6 @@ Route::post('/leads', [LeadSearchController::class, 'store']);
 
 Route::post('/marketing-leads', [MarketingLeadController::class, 'store']);
     Route::post('/callback-requests', [CallbackRequestController::class, 'store']);
+Route::post('/cta-click', [CtaClickController::class, 'store']);
 
 });
