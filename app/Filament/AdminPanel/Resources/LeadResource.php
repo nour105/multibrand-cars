@@ -9,6 +9,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class LeadResource extends Resource
 {
@@ -28,11 +31,9 @@ class LeadResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-
                         Forms\Components\TextInput::make('phone')
                             ->required()
                             ->maxLength(50),
-
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required(),
@@ -48,16 +49,13 @@ class LeadResource extends Resource
                                 '10000-15000' => '10,000 – 15,000',
                                 '15000+' => '15,000+',
                             ]),
-
                         Forms\Components\Toggle::make('has_loans'),
-
                         Forms\Components\Select::make('loan_type')
                             ->options([
                                 'personal' => 'Personal',
                                 'realestate' => 'Real Estate',
                                 'both' => 'Both',
                             ]),
-
                         Forms\Components\Select::make('visa_limit')
                             ->options([
                                 'below_5000' => 'Below 5,000',
@@ -65,7 +63,6 @@ class LeadResource extends Resource
                                 '10000-15000' => '10,000 – 15,000',
                                 '15000+' => '15,000+',
                             ]),
-
                         Forms\Components\TextInput::make('bank'),
                     ])
                     ->columns(3),
@@ -75,14 +72,11 @@ class LeadResource extends Resource
                         Forms\Components\TextInput::make('emi_budget')
                             ->numeric()
                             ->disabled(),
-
                         Forms\Components\Toggle::make('emi_calculated')
                             ->disabled(),
-
                         Forms\Components\Select::make('car_id')
                             ->relationship('car', 'name')
                             ->searchable(),
-
                         Forms\Components\TextInput::make('purchase_timeline'),
                     ])
                     ->columns(2),
@@ -104,39 +98,49 @@ class LeadResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-
                 Tables\Columns\TextColumn::make('phone'),
-
                 Tables\Columns\TextColumn::make('email'),
-
                 Tables\Columns\TextColumn::make('car.name')
                     ->label('Selected Car')
                     ->placeholder('-'),
-
                 Tables\Columns\TextColumn::make('emi_budget')
                     ->label('EMI'),
-
                 Tables\Columns\IconColumn::make('emi_calculated')
                     ->boolean()
                     ->label('EMI?'),
-
                 Tables\Columns\TextColumn::make('created_at')
-                    ->since()
+                    ->dateTime()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('emi_calculated')
                     ->label('EMI Calculated'),
-
-                Tables\Filters\Filter::make('today')
-                    ->query(fn ($query) =>
-                        $query->whereDate('created_at', now())
-                    ),
+                Tables\Filters\Filter::make('date')
+                    ->form([
+                        Forms\Components\DatePicker::make('from')->label('From Date'),
+                        Forms\Components\DatePicker::make('until')->label('Until Date'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['from'] ?? null, fn($q, $date) => $q->whereDate('created_at', '>=', $date))
+                            ->when($data['until'] ?? null, fn($q, $date) => $q->whereDate('created_at', '<=', $date));
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Export Excel')
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(function () {
+                                return 'leads-' . now()->format('Y-m-d_H-i');
+                            }),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
