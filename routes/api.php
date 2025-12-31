@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CarController;
 use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\LeadSearchController;
 use App\Http\Controllers\Api\MarketingLeadController;
+use App\Http\Controllers\Api\CallbackRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,5 +76,6 @@ Route::post('/lead-search', [LeadSearchController::class, 'store']);
 Route::post('/leads', [LeadSearchController::class, 'store']);
 
 Route::post('/marketing-leads', [MarketingLeadController::class, 'store']);
+    Route::post('/callback-requests', [CallbackRequestController::class, 'store']);
 
 });
