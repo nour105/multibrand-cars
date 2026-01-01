@@ -10,9 +10,7 @@ use Carbon\Carbon;
 
 class CarController extends Controller
 {
-    /**
-     * Display a listing of all cars.
-     */
+  
  public function index()
     {
         try {
@@ -28,7 +26,7 @@ class CarController extends Controller
             $result = $cars->map(fn ($car) => [
                 'id' => $car->id,
                 'name' => $car->name,
-                'slug' => $car->slug,s
+                'slug' => $car->slug,
                 'brand' => $car->brand?->name,
                 'price' => $car->price,
                 'currency' => $car->currency,
