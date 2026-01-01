@@ -24,6 +24,7 @@ class Car extends Model
     'currency',
     'emi_monthly',
     'available_trims',
+    'available_showrooms',
     'colors',
     'features',
     'video_url',
@@ -37,6 +38,7 @@ class Car extends Model
     'interior_images' => 'array',
     'exterior_images' => 'array',
     'available_trims' => 'array',
+    'available_showrooms' => 'array',
     'colors' => 'array',
     'features' => 'array',
 ];

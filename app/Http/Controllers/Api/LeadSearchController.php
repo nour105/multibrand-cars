@@ -12,86 +12,85 @@ use Carbon\Carbon;
 class LeadSearchController extends Controller
 {
     public function store(Request $request, EmiCalculatorService $emiService)
-{
-    $data = $request->validate([
-        'name' => 'required|string',
-        'phone' => 'required|string',
-        'email' => 'required|email',
+    {
+        try {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'phone' => 'required|string',
+                'email' => 'required|email',
 
-        'salary_range' => 'nullable|string',
-        'has_loans' => 'nullable|boolean',
-        'loan_type' => 'nullable|string',
-        'visa_limit' => 'nullable|string',
-        'bank' => 'nullable|string',
+                'salary_range' => 'nullable|string',
+                'has_loans' => 'nullable|boolean',
+                'loan_type' => 'nullable|string',
+                'visa_limit' => 'nullable|string',
+                'bank' => 'nullable|string',
 
-        'purchase_timeline' => 'nullable|string',
-        'car_id' => 'nullable|exists:cars,id',
+                'purchase_timeline' => 'nullable|string',
+                'car_id' => 'nullable|exists:cars,id',
 
-        'marketing_consent' => 'nullable|boolean',
-        'privacy_accepted' => 'required|boolean',
-        'fetch_cars_only' => 'nullable|boolean', // ✅ Flag جديد
-    ]);
+                'marketing_consent' => 'nullable|boolean',
+                'privacy_accepted' => 'required|boolean',
+                'fetch_cars_only' => 'nullable|boolean',
+            ]);
 
-    $fetchCarsOnly = $data['fetch_cars_only'] ?? false;
+            $fetchCarsOnly = $data['fetch_cars_only'] ?? false;
 
-    // 👉 EMI decision
-    $canCalculateEmi =
-        !empty($data['salary_range']) ||
-        !empty($data['visa_limit']) ||
-        !empty($data['bank']);
+            $emiBudget = 0;
+            if (!empty($data['salary_range']) || !empty($data['visa_limit'])) {
+                $emiBudget = $emiService->calculate(
+                    $data['salary_range'] ?? null,
+                    $data['has_loans'] ?? false,
+                    $data['loan_type'] ?? null,
+                    $data['visa_limit'] ?? null
+                );
+            }
 
-    $emiBudget = 0;
+            if (!$fetchCarsOnly) {
+                Lead::create([
+                    ...$data,
+                    'emi_budget' => $emiBudget,
+                    'emi_calculated' => true,
+                ]);
+            }
 
-    if ($canCalculateEmi) {
-        $emiBudget = $emiService->calculate(
-            $data['salary_range'] ?? null,
-            $data['has_loans'] ?? 0,
-            $data['loan_type'] ?? null,
-            $data['visa_limit'] ?? null
-        );
+            $carsQuery = Car::with('brand');
+
+            if ($emiBudget > 0) {
+                $carsQuery->where('emi_monthly', '<=', $emiBudget);
+            }
+
+            $cars = $carsQuery->get()->map(fn ($car) => [
+                'id' => $car->id,
+                'name' => $car->name,
+                'slug' => $car->slug,
+                'brand' => $car->brand?->name,
+                'price' => $car->price,
+                'currency' => $car->currency,
+                'emi_monthly' => $car->emi_monthly,
+
+                // ✅ JSON data preserved
+                'colors' => $car->colors ?? [],
+                'features' => $car->features ?? [],
+                'available_trims' => $car->available_trims ?? [],
+'available_showrooms' => $car->available_showrooms ?? [],
+'specifications' => $car->specifications ?? [],
+
+                'image' => $car->banner_image
+                    ? asset('storage/' . $car->banner_image)
+                    : null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'emi_budget' => $emiBudget,
+                'results' => $cars,
+            ]);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
-
-    // ⚠️ فقط إذا ما كان طلب Show Cars فقط نخزن Lead
-    if (!$fetchCarsOnly) {
-        Lead::create([
-            ...$data,
-            'emi_budget' => $emiBudget,
-            'emi_calculated' => $canCalculateEmi,
-        ]);
-    }
-
-    // 👉 Cars query
-    $now = Carbon::now();
-
-    $carsQuery = Car::with([
-        'brand',
-        'offers' => fn ($q) =>
-            $q->whereDate('start_date', '<=', $now)
-              ->whereDate('end_date', '>=', $now),
-    ]);
-
-    if ($canCalculateEmi && $emiBudget > 0) {
-        $carsQuery->where('emi_monthly', '<=', $emiBudget);
-    }
-
-    $cars = $carsQuery->get()->map(fn ($car) => [
-        'id' => $car->id,
-        'name' => $car->name,
-        'brand' => $car->brand?->name,
-        'price' => $car->price,
-        'currency' => $car->currency,
-        'emi_monthly' => $car->emi_monthly,
-        'has_offer' => $car->offers->isNotEmpty(),
-        'image' => $car->banner_image
-            ? asset('storage/' . $car->banner_image)
-            : 'https://via.placeholder.com/400x250',
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'emi_budget' => $emiBudget,
-        'results' => $cars,
-    ]);
-}
-
 }

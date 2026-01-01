@@ -13,44 +13,57 @@ class CarController extends Controller
     /**
      * Display a listing of all cars.
      */
-    public function index()
+ public function index()
     {
         try {
-            $cars = Car::with(['brand', 'offers' => function($query) {
-                $query->where('start_date', '<=', Carbon::now())
-                      ->where('end_date', '>=', Carbon::now());
-            }])->get();
+            $now = Carbon::now();
 
-           $result = $cars->map(function($car) {
-    return [
-        'id' => $car->id,
-        'name' => $car->name,
-        'slug' => $car->slug,
-        'brand' => $car->brand->name ?? null,
-        'price' => $car->price,
-        'currency' => $car->currency,
-        'emi_monthly' => $car->emi_monthly,
-        'has_offer' => $car->offers->isNotEmpty(),
-        'offers' => $car->offers,
-        'image' => $car->banner_image ? asset('storage/' . $car->banner_image) : null,
-        'card_image' => $car->card_image ? asset('storage/' . $car->card_image) : null, // ✅
-    ];
-});
+            $cars = Car::with([
+                'brand',
+                'offers' => fn ($q) =>
+                    $q->whereDate('start_date', '<=', $now)
+                      ->whereDate('end_date', '>=', $now)
+            ])->get();
+
+            $result = $cars->map(fn ($car) => [
+                'id' => $car->id,
+                'name' => $car->name,
+                'slug' => $car->slug,s
+                'brand' => $car->brand?->name,
+                'price' => $car->price,
+                'currency' => $car->currency,
+                'emi_monthly' => $car->emi_monthly,
+                'has_offer' => $car->offers->isNotEmpty(),
+                'description' => $car->description,
+                'content' => $car->content,
+
+                'colors' => $car->colors ?? [],
+'features' => $car->features ?? [],
+'available_trims' => $car->available_trims ?? [],
+'available_showrooms' => $car->available_showrooms ?? [],
+'specifications' => $car->specifications ?? [],
+
+                'image' => $car->banner_image
+                    ? asset('storage/' . $car->banner_image)
+                    : null,
+                'card_image' => $car->card_image
+                    ? asset('storage/' . $car->card_image)
+                    : null,
+            ]);
+
             return response()->json([
                 'success' => true,
-                'message' => 'Cars retrieved successfully',
                 'data' => $result,
                 'count' => $result->count(),
-            ], 200);
-        } catch (\Exception $e) {
+            ]);
+
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error retrieving cars',
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
-
     /**
      * Display a specific car.
      */
@@ -71,7 +84,15 @@ class CarController extends Controller
                 'name' => $car->name,
                 'slug' => $car->slug, // ✅ هون ضفنا slu
                 'brand' => $car->brand->name ?? null,
+                // ✅ إضافة description و content
+    'description' => $car->description,
+    'content' => $car->content,
                 'price' => $car->price,
+                'available_trims' => $car->available_trims ?? [],
+'available_showrooms' => $car->available_showrooms ?? [],
+'colors' => $car->colors ?? [],
+'features' => $car->features ?? [],
+'specifications' => $car->specifications ?? [],
                 'currency' => $car->currency,
                 'emi_monthly' => $car->emi_monthly,
                 'has_offer' => $car->offers->isNotEmpty(),
@@ -112,6 +133,7 @@ class CarController extends Controller
                 'emi_monthly' => 'nullable|numeric',
                 'currency' => 'nullable|string|max:5',
                 'available_trims' => 'nullable|array',
+                'available_showrooms' => 'nullable|array',
                 'colors' => 'nullable|array',
                 'features' => 'nullable|array',
                 'video_url' => 'nullable|string',
@@ -162,6 +184,7 @@ class CarController extends Controller
                 'interior_images' => 'nullable|array',
                 'exterior_images' => 'nullable|array',
                 'available_trims' => 'nullable|array',
+                'available_showrooms' => 'nullable|array',
                 'colors' => 'nullable|array',
                 'features' => 'nullable|array',
                 'video_url' => 'nullable|string',
@@ -190,6 +213,59 @@ class CarController extends Controller
             ], 500);
         }
     }
+
+
+    /**
+     * FILTER OPTIONS (JSON SAFE)
+     */
+ public function getFilterOptions()
+{
+    try {
+        $cars = Car::all();
+
+        $colors = collect($cars)
+            ->flatMap(fn ($c) => $c->colors ?? [])
+            ->unique()
+            ->values();
+
+        $features = collect($cars)
+            ->flatMap(fn ($c) => $c->features ?? [])
+            ->unique()
+            ->values();
+
+        $trims = collect($cars)
+            ->flatMap(fn ($c) => $c->available_trims ?? [])
+            ->unique()
+            ->values();
+
+        $showrooms = collect($cars)
+            ->flatMap(fn ($c) => $c->available_showrooms ?? [])
+            ->unique()
+            ->values();
+
+        $specifications = collect($cars)
+            ->flatMap(fn ($c) => $c->specifications ?? [])
+            ->unique()
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => compact(
+                'colors',
+                'features',
+                'trims',
+                'showrooms',
+                'specifications'
+            ),
+        ]);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
 
     /**
      * Delete the specified car.
@@ -237,7 +313,16 @@ class CarController extends Controller
             'slug' => $car->slug, // ✅ هون ضفنا slug
             'brand' => $car->brand->name ?? null,
             'price' => $car->price,
+            // ✅ إضافة description و content
+    'description' => $car->description,
+    'content' => $car->content,
             'currency' => $car->currency,
+            'available_trims' => $car->available_trims ?? [],
+'available_showrooms' => $car->available_showrooms ?? [],
+'colors' => $car->colors ?? [],
+'features' => $car->features ?? [],
+'specifications' => $car->specifications ?? [],
+
             'emi_monthly' => $car->emi_monthly,
             'has_offer' => $car->offers->isNotEmpty(),
             'offers' => $car->offers,
@@ -278,6 +363,15 @@ class CarController extends Controller
                     'name' => $car->name,
                     'slug' => $car->slug, // ✅ هون ضفنا slug
                     'brand' => $car->brand->name ?? null,
+                    // ✅ إضافة description و content
+    'description' => $car->description,
+    'content' => $car->content,
+    'available_trims' => $car->available_trims ?? [],
+'available_showrooms' => $car->available_showrooms ?? [],
+'colors' => $car->colors ?? [],
+'features' => $car->features ?? [],
+'specifications' => $car->specifications ?? [],
+
                     'price' => $car->price,
                     'currency' => $car->currency,
                     'emi_monthly' => $car->emi_monthly,

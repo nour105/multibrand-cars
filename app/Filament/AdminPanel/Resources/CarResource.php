@@ -61,6 +61,7 @@ Forms\Components\FileUpload::make('banner_image')
     ->disk('public')
     ->directory('cars/card')
     ->helperText('Used in car listing cards (not banner)'),
+    
 
 Forms\Components\TextInput::make('price')
     ->label('Cash Price')
@@ -94,6 +95,15 @@ Forms\Components\Repeater::make('available_trims')
     ->schema([
         Forms\Components\TextInput::make('trim_name')->label('Trim Name'),
     ]),
+    Forms\Components\Repeater::make('available_showrooms')
+    ->label('Available in this Showroom')
+    ->schema([
+        Forms\Components\TextInput::make('showroom_name')
+            ->label('Showroom Name')
+            ->required(),
+    ])
+    ->columnSpanFull(),
+
 
 Forms\Components\Repeater::make('colors')
     ->label('Available Colors')
